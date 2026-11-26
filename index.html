@@ -592,7 +592,13 @@ function applyRates(r, when) {
 }
 function showStatus(kind, text) {
   const b = $("status"); b.className = "status " + kind; $("statusText").textContent = text;
-  $("note").textContent = `Tipo de cambio de referencia (mercado medio), del ${fmtFecha(ratesDate)}. Casas de cambio, bancos y tarjetas aplican su propio margen, así que el monto final puede variar.`;
+  $("note").textContent = `Tipo de cambio de mercado, actualizado el ${fmtFecha(ratesDate)} a las ${hhmm(ratesDate)}. Casas de cambio, bancos y tarjetas aplican su propio margen, así que el monto final puede variar.`;
+}
+// Fuente principal: precio de mercado al minuto (el mismo que muestra Google)
+async function getCB() {
+  const r = await fetch("https://api.coinbase.com/v2/exchange-rates?currency=PEN", { cache: "no-store" }); const j = await r.json();
+  const rates = {}; for (const [k, v] of Object.entries(j.data.rates)) { const n = parseFloat(v); if (n > 0) rates[k] = n; }
+  if (!(rates.USD > 0)) throw 0; return { rates, when: new Date(), live: true };
 }
 async function getER() {
   const r = await fetch("https://open.er-api.com/v6/latest/PEN", { cache: "no-store" }); const j = await r.json();
@@ -603,22 +609,27 @@ async function getFawaz() {
   const rates = {}; for (const [k, v] of Object.entries(j.pen)) rates[k.toUpperCase()] = v;
   return { rates, when: new Date(j.date + "T12:00:00") };
 }
-async function loadRates() {
-  showStatus("loading", "Actualizando…");
-  const res = await Promise.allSettled([getER(), getFawaz()]);
+const hhmm = d => d.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", hour12: false });
+async function loadRates(quiet) {
+  if (!quiet) showStatus("loading", "Actualizando…");
+  let res = await Promise.allSettled([getCB()]);
+  if (res[0].status !== "fulfilled") res = await Promise.allSettled([getER(), getFawaz()]);
   const ok = res.filter(x => x.status === "fulfilled").map(x => x.value).sort((a, b) => b.when - a.when);
   if (ok.length) {
     applyRates(ok[0].rates, ok[0].when);
     try { localStorage.setItem("rates", JSON.stringify({ rates: ok[0].rates, when: ok[0].when.getTime() })); } catch (e) {}
-    render("hist"); drawTape(); showStatus(esHoy(ratesDate) ? "live" : "old", esHoy(ratesDate) ? `Al día · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}` : `Último: ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
+    render("hist"); if (!quiet) drawTape();
+    if (ok[0].live) { showStatus("live", `En vivo · ${hhmm(ratesDate)}`); return; }
+    showStatus(esHoy(ratesDate) ? "live" : "old", esHoy(ratesDate) ? `Al día · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}` : `Último: ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
   } else {
     render(); showStatus(esHoy(ratesDate) ? "live" : "old", `${esHoy(ratesDate) ? "Al día" : "Último"} · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
   }
 }
 try { const c = JSON.parse(localStorage.getItem("rates") || "null"); if (c && c.when > ratesDate.getTime()) applyRates(c.rates, new Date(c.when)); } catch (e) {}
 $("status").addEventListener("click", loadRates);
-document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() - lastLoad > 30 * 60 * 1000) { lastLoad = Date.now(); loadRates(); } });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() - lastLoad > 60 * 1000) { lastLoad = Date.now(); loadRates(); } });
 let lastLoad = Date.now();
+setInterval(() => { if (!document.hidden) { lastLoad = Date.now(); loadRates(true); } }, 60 * 1000);
 drawTape();
 render();
 loadRates();
