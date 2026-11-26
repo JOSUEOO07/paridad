@@ -244,6 +244,22 @@ input.num::placeholder { color: var(--muted); }
   #rows .card .v { font-size: .95rem; text-align: right; }
   #rows .card .ch { width: 62px; text-align: right; flex: none; }
 }
+.card .nm { display: none; }
+/* Pantalla ancha: conversor y gráfico a la izquierda, monedas a la derecha a toda la altura */
+@media (min-width: 1200px) {
+  .wrap { max-width: min(1760px, 94vw); grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); column-gap: 28px; align-items: start; }
+  .wrap > header, .wrap > .tape { grid-column: 1 / -1; }
+  .wrap > .main, .duo #chart { grid-column: 1; }
+  .duo { display: contents; }
+  #boardSec { grid-column: 2; grid-row: 3 / span 2; align-self: stretch; display: flex; flex-direction: column; }
+  #rows.cards { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; flex: 1; align-content: space-between; }
+  #rows .card { padding: 13px 4px; }
+  #rows .card .nm { display: block; color: var(--muted); font: 500 .85rem var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  #rows .card .top { flex: 1 1 auto; min-width: 0; }
+  #rows .card .flag { font-size: 1.6rem; }
+  #rows .card .v { font-size: 1.05rem; }
+  .chart svg { height: 230px; }
+}
 @media (prefers-reduced-motion: reduce) { .chart .line { stroke-dasharray: none; } .chart .area, .chart .dot { opacity: 1; } }
 </style>
 </head>
@@ -396,8 +412,8 @@ $("quick").addEventListener("click", e => { const b = e.target.closest("button")
 // ---- Gráfico grande con frase clara ----
 let chartKey = "";
 const lower = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
-function drawChart() {
-  const a = state.from, b = state.to, key = `${a}-${b}-${RANGE}-${Object.keys(HIST).length}`;
+function drawChart(quieto) {
+  const a = state.from, b = state.to, key = `${a}-${b}-${RANGE}-${Object.keys(HIST).length}-${(RATES[b] / RATES[a]).toPrecision(7)}`;
   if (key === chartKey) return; chartKey = key;
   const sec = $("chart"), s = series(a, b, RANGE);
   if (s.length < 3) { sec.hidden = true; return; }
@@ -411,7 +427,7 @@ function drawChart() {
   ln.setAttribute("d", d); ar.setAttribute("d", `${d} L${pts[pts.length - 1][0].toFixed(1)},${H} L${pts[0][0].toFixed(1)},${H} Z`);
   dot.setAttribute("cx", pts[pts.length - 1][0]); dot.setAttribute("cy", pts[pts.length - 1][1]);
   ln.style.setProperty("--len", ln.getTotalLength());
-  for (const el of [ln, ar, dot]) { el.style.animation = "none"; void el.getBoundingClientRect(); el.style.animation = ""; }
+  if (!quieto) for (const el of [ln, ar, dot]) { el.style.animation = "none"; void el.getBoundingClientRect(); el.style.animation = ""; }
   $("chartTitle").textContent = `1 ${a} en ${b}`;
   $("cMin").textContent = `mín ${fmt(mn)}`; $("cMax").textContent = `máx ${fmt(mx)}`;
   const ch = (s[s.length - 1] - s[0]) / s[0] * 100, per = RANGE === 7 ? "hace una semana" : "hace un mes", pct = Math.abs(ch).toFixed(1) + "%";
@@ -435,11 +451,18 @@ addEventListener("resize", () => { const s2 = $("chart").querySelector("svg"), w
 const TAPE = ["USD","EUR","CLP","CNY","VES","ARS","BOB","COP","BRL","MXN"];
 function drawTape() {
   const html = TAPE.map(c => {
-    const p = 1 / RATES[c], ch = change(c, "PEN");
-    const val = p >= 0.1 ? `S/ ${p.toFixed(3)}` : `S/1 = ${fmt(RATES[c])}`;
-    return `<button type="button" class="tick" data-c="${c}"><span class="flag">${INFO[c].flag}</span>${c} <span class="p">${val}</span>${ch == null ? "" : `<span class="${cls(ch)}">${arrow(ch)}</span>`}</button>`;
+    return `<button type="button" class="tick" data-c="${c}"><span class="flag">${INFO[c].flag}</span>${c} <span class="p"></span><span class="c"></span></button>`;
   }).join("");
   $("tapeIn").innerHTML = `<span class="grp">${html}</span><span class="grp" aria-hidden="true">${html.replaceAll("<button ", '<button tabindex="-1" ')}</span>`;
+  updateTape();
+}
+// Pone los precios de la cinta al día (cada minuto) sin reiniciar su movimiento
+function updateTape() {
+  for (const b of $("tapeIn").querySelectorAll(".tick")) {
+    const c = b.dataset.c, p = 1 / RATES[c], ch = change(c, "PEN");
+    b.querySelector(".p").textContent = p >= 0.1 ? `S/ ${p.toFixed(3)}` : `S/1 = ${fmt(RATES[c])}`;
+    const e = b.querySelector(".c"); e.textContent = ch == null ? "" : arrow(ch); e.className = "c " + (ch == null ? "" : cls(ch));
+  }
 }
 $("tapeIn").addEventListener("click", e => { const b = e.target.closest(".tick"); if (b) { state.from = b.dataset.c; state.to = "PEN"; render("pick"); } });
 
@@ -469,7 +492,7 @@ function drawCards(n, a) {
     list.forEach((c, i) => {
       const d = document.createElement("button"); d.type = "button"; d.className = "card"; d.dataset.c = c; d.title = INFO[c].name;
       d.style.animationDelay = (i * 45) + "ms";
-      d.innerHTML = `<span class="top"><span class="flag">${INFO[c].flag}</span><span class="code">${c}</span></span><span class="v"></span><span class="ch"></span>`;
+      d.innerHTML = `<span class="top"><span class="flag">${INFO[c].flag}</span><span class="code">${c}</span><span class="nm">${INFO[c].name}</span></span><span class="v"></span><span class="ch"></span>`;
       d.addEventListener("click", () => { state.to = c; render("pick"); window.scrollTo({ top: 0, behavior: "smooth" }); });
       rows.appendChild(d);
     });
@@ -492,7 +515,7 @@ function render(how) {
   setOut(convert(n, a, b), how !== "type" && how !== "hist");
   $("rate").textContent = `1 ${a} = ${fmt(convert(1, a, b))} ${b}`;
   $("boardTitle").textContent = `${state.entry ? fmtEntry(state.entry) : "0"} ${a} en otras monedas`;
-  drawCards(n, a); drawTrend(); drawQuick(); drawChart(); fitNums(); save();
+  drawCards(n, a); drawTrend(); drawQuick(); drawChart(how === "hist" || how === "type"); fitNums(); save();
 }
 // Achica el número si no cabe en su recuadro, para que nunca se corte
 function fitNums() {
@@ -618,7 +641,7 @@ async function loadRates(quiet) {
   if (ok.length) {
     applyRates(ok[0].rates, ok[0].when);
     try { localStorage.setItem("rates", JSON.stringify({ rates: ok[0].rates, when: ok[0].when.getTime() })); } catch (e) {}
-    render("hist"); if (!quiet) drawTape();
+    render("hist"); if (quiet) updateTape(); else drawTape();
     if (ok[0].live) { showStatus("live", `En vivo · ${hhmm(ratesDate)}`); return; }
     showStatus(esHoy(ratesDate) ? "live" : "old", esHoy(ratesDate) ? `Al día · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}` : `Último: ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
   } else {
