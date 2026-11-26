@@ -163,6 +163,88 @@ h1 { font-family: var(--brand); font-weight: 600; letter-spacing: .14em; text-tr
 .status.live .dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(217,178,92,.18); }
 .row .who b, .cur-btn { letter-spacing: .02em; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } .k:active { transform: none; } }
+
+/* ===== v2: teclado del celular y más vida ===== */
+html, body { overflow-x: clip; }
+.tape { overflow: hidden; margin-inline: -16px; border-block: 1px solid var(--line); background: #0e0e0c;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.tape-in { display: inline-flex; white-space: nowrap; animation: tape 42s linear infinite; will-change: transform; }
+.tape:hover .tape-in, .tape:active .tape-in { animation-play-state: paused; }
+.grp { display: inline-flex; gap: 26px; padding: 9px 26px 9px 0; }
+@keyframes tape { to { transform: translateX(-50%); } }
+.tick { display: inline-flex; align-items: center; gap: 6px; font: 600 .78rem var(--mono); color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; }
+.tick .flag { font-size: 1rem; }
+.tick .p { color: var(--muted); font-weight: 500; }
+.up { color: #5fd08f; } .dn { color: #f0806e; } .eq { color: var(--muted); }
+input.num { width: 100%; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); padding: 0; margin: 0; caret-color: var(--accent); }
+input.num::placeholder { color: var(--muted); }
+#billFrom { cursor: text; }
+.bill:focus-within { box-shadow: 0 0 0 1px var(--accent) inset, 0 0 30px rgba(217,178,92,.16); }
+.swap { transition: transform .45s cubic-bezier(.3,1.4,.5,1); }
+.trend { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.trend svg { flex: 1; height: 28px; min-width: 0; overflow: visible; }
+.trend polyline { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.trend span { font: 600 .74rem var(--mono); white-space: nowrap; }
+.chipbtn { flex: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 8px 14px; font: 600 .8rem var(--body); cursor: pointer; }
+#copyKey { margin-left: auto; }
+.chipbtn.info { width: 34px; height: 34px; padding: 0; display: grid; place-items: center; color: var(--muted); font-size: 1rem; }
+.chipbtn.done { background: var(--gold-grad); color: var(--accent-ink); border-color: transparent; }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.b2-title { font-family: var(--display); font-size: .95rem; font-weight: 600; color: var(--muted); margin: 4px 0 10px; overflow-wrap: anywhere; }
+#rows.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: grid; gap: 6px; text-align: left; color: var(--ink);
+  cursor: pointer; font: inherit; min-width: 0; animation: pop .5s cubic-bezier(.3,1.3,.5,1) both; transition: border-color .2s, transform .15s; }
+.card:hover { border-color: var(--accent); } .card:active { transform: scale(.97); }
+.card .top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.card .flag { font-size: 1.7rem; line-height: 1; }
+.card .code { font: 600 .78rem var(--mono); color: var(--muted); letter-spacing: .04em; }
+.card .v { font: 600 1.08rem var(--mono); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card .ch { font: 600 .72rem var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes pop { from { opacity: 0; transform: translateY(16px) scale(.92); } }
+.bump { animation: bump .4s ease; }
+@keyframes bump { 40% { transform: scale(1.04); } }
+@media (min-width: 640px) { #rows.cards { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); } }
+@media (min-width: 900px) { .tape { margin-inline: 0; border-radius: 14px; border: 1px solid var(--line); } }
+@media (prefers-reduced-motion: reduce) { .tape-in { animation: none; } }
+/* ===== Propuesta B: celular sin tarjetas, gráfico grande, montos rápidos ===== */
+.trend { display: none !important; }
+@media (max-width: 640px) { #boardSec { display: none; } }
+.quick { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
+.quick::-webkit-scrollbar { display: none; }
+.quick button { flex: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 9px 15px; font: 600 .85rem var(--mono); cursor: pointer; transition: border-color .2s, background .2s; }
+.quick button.on { border-color: var(--accent); background: rgba(217,178,92,.12); color: var(--accent); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; }
+.chart-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.chart-title { font: 600 .8rem var(--mono); color: var(--muted); }
+.seg { display: flex; background: var(--chip); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 600 .75rem var(--body); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.seg button.on { background: var(--ink); color: var(--bg); }
+.chart svg { width: 100%; height: 130px; display: block; margin-top: 12px; overflow: visible; }
+.chart .line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw 1.1s ease forwards; }
+.chart .area { opacity: 0; animation: fadein .9s .5s forwards; }
+.chart .dot { fill: #f7e3a3; filter: drop-shadow(0 0 6px rgba(247,227,163,.8)); opacity: 0; animation: fadein .3s 1s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fadein { to { opacity: 1; } }
+.ends { display: flex; justify-content: space-between; font: 500 .72rem var(--mono); color: var(--muted); margin-top: 8px; }
+.insight { font: 500 1.05rem/1.45 var(--body); margin: 14px 0 0; }
+.insight b { font-weight: 700; }
+.insight .tip { display: block; color: var(--muted); font-size: .85rem; font-weight: 500; margin-top: 2px; }
+@media (min-width: 900px) {
+  .duo { display: grid; gap: 18px; }
+  .chart svg { height: 170px; }
+  #boardSec { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px 18px; }
+  #boardSec .b2-title { margin: 0 0 6px; font: 600 .8rem var(--mono); }
+  #rows.cards { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); grid-auto-flow: column; column-gap: 40px; row-gap: 0; }
+  #rows .card { display: flex; align-items: center; gap: 10px; background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 9px 2px; }
+  #rows .card:hover { background: var(--chip); border-color: var(--line); }
+  #rows .card .top { flex: 1 0 auto; justify-content: flex-start; gap: 10px; }
+  #rows .card .v { flex: 0 1 auto; min-width: 0; }
+  #rows .card .flag { font-size: 1.35rem; }
+  #rows .card .code { color: var(--ink); }
+  #rows .card .v { font-size: .95rem; text-align: right; }
+  #rows .card .ch { width: 62px; text-align: right; flex: none; }
+}
+@media (prefers-reduced-motion: reduce) { .chart .line { stroke-dasharray: none; } .chart .area, .chart .dot { opacity: 1; } }
 </style>
 </head>
 <body>
@@ -175,40 +257,48 @@ h1 { font-family: var(--brand); font-weight: 600; letter-spacing: .14em; text-tr
     <button class="status" id="status" type="button" title="Actualizar tipo de cambio"><span class="dot"></span><span id="statusText">Cargando…</span></button>
   </header>
 
+  <div class="tape" aria-label="Monedas principales en soles"><div class="tape-in" id="tapeIn"></div></div>
+
   <div class="main">
   <div class="pairrow">
     <div class="bill active" id="billFrom">
       <span class="tag">Tengo</span>
       <button class="cur-btn" id="fromBtn" type="button" aria-label="Elegir moneda de origen"></button>
-      <div class="num" id="inDisp" aria-live="polite"></div>
+      <input class="num" id="inDisp" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" spellcheck="false" placeholder="0" aria-label="Monto a convertir">
     </div>
     <button class="swap" id="swap" type="button" aria-label="Intercambiar monedas">⇄</button>
     <div class="bill" id="billTo">
       <span class="tag">Recibo</span>
       <button class="cur-btn" id="toBtn" type="button" aria-label="Elegir moneda de destino"></button>
       <div class="num out" id="outDisp" aria-live="polite"></div>
+      <div class="trend" id="trend" hidden><svg viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true"><polyline id="spark" points=""/></svg><span id="trendTxt"></span></div>
     </div>
   </div>
 
   <div class="mid">
     <div class="rate" id="rate"></div>
-    <span class="kbd-hint">Escribe el monto con tu teclado · Supr borra todo</span>
+    <button class="chipbtn" id="copyKey" type="button">Copiar</button>
+    <button class="chipbtn info" id="infoBtn" type="button" aria-label="Sobre el tipo de cambio" aria-expanded="false" aria-controls="note">ⓘ</button>
   </div>
 
-  <div class="pad" id="pad" aria-label="Teclado numérico">
-    <button class="k" data-k="7">7</button><button class="k" data-k="8">8</button><button class="k" data-k="9">9</button><button class="k fn" data-k="back" aria-label="Borrar">⌫</button>
-    <button class="k" data-k="4">4</button><button class="k" data-k="5">5</button><button class="k" data-k="6">6</button><button class="k fn" data-k="clear">C</button>
-    <button class="k" data-k="1">1</button><button class="k" data-k="2">2</button><button class="k" data-k="3">3</button><button class="k fn" data-k="000">000</button>
-    <button class="k" data-k="00">00</button><button class="k" data-k="0">0</button><button class="k" data-k=".">.</button><button class="k go" data-k="copy" id="copyKey">Copiar</button>
+  <div class="quick" id="quick"></div>
+
+
+  <p class="note" id="note" hidden>Tipo de cambio de referencia (mercado medio). Casas de cambio, bancos y tarjetas aplican su propio margen, así que el monto final puede variar.</p>
   </div>
 
-  <p class="note" id="note">Tipo de cambio de referencia (mercado medio). Casas de cambio, bancos y tarjetas aplican su propio margen, así que el monto final puede variar.</p>
-  </div>
-
-  <section class="board" aria-label="Equivalencias">
-    <div class="board-head"><h2 id="boardTitle"></h2><p>Las monedas más usadas desde Perú. Toca una para convertir a ella.</p></div>
-    <div id="rows"></div>
+  <div class="duo">
+    <section class="chart" id="chart" hidden aria-label="Cómo cambió el precio">
+      <div class="chart-head"><span class="chart-title" id="chartTitle"></span><div class="seg" id="seg"><button type="button" data-d="7" class="on">7 días</button><button type="button" data-d="30">30 días</button></div></div>
+      <svg aria-hidden="true"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b25c" stop-opacity=".35"/><stop offset="1" stop-color="#d9b25c" stop-opacity="0"/></linearGradient></defs><path class="area" id="area" fill="url(#ag)"/><path class="line" id="line"/><circle class="dot" id="dot" r="4.5"/></svg>
+      <div class="ends"><span id="cMin"></span><span id="cMax"></span></div>
+      <p class="insight" id="insight"></p>
+    </section>
+  <section aria-label="Equivalencias" id="boardSec">
+    <h2 class="b2-title" id="boardTitle"></h2>
+    <div id="rows" class="cards"></div>
   </section>
+  </div>
 </div>
 
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -224,7 +314,8 @@ h1 { font-family: var(--brand); font-weight: 600; letter-spacing: .14em; text-tr
 // Unidades de cada moneda por 1 sol (PEN), tipo de cambio del 13 oct 2026
 const RATES = {"PEN":1,"AED":1.06467015,"AFN":18.84599654,"ALL":23.75045856,"AMD":104.98903994,"ANG":0.52095778,"AOA":264.71278882,"ARS":439.69735023,"AUD":0.41643512,"AWG":0.51892704,"AZN":0.49283769,"BAM":0.50737885,"BBD":0.57980675,"BDT":35.79779885,"BGN":0.50737885,"BHD":0.10900367,"BIF":869.86677723,"BMD":0.28990338,"BND":0.3712619,"BOB":3.40869737,"BRL":1.44581205,"BSD":0.28990338,"BTN":27.60857123,"BWP":3.98710916,"BYN":0.87587168,"BZD":0.58494,"CAD":0.41368989,"CDF":670.13831883,"CHF":0.24150288,"CLP":283.24589598,"CNY":1.9411229,"COP":926.60157396,"CRC":131.97365248,"CUP":6.9700351,"CVE":28.60609868,"CZK":6.32238938,"DJF":51.62669977,"DKK":1.9391948,"DOP":17.76247723,"DZD":39.04172895,"EGP":15.26986228,"ERN":4.34855063,"ETB":46.92775776,"EUR":0.25941869,"FJD":0.65278851,"FKP":0.21926219,"GBP":0.21926219,"GEL":0.75143046,"GHS":3.39623831,"GIP":0.21926219,"GMD":21.61280679,"GNF":2554.05498149,"GTQ":2.21630836,"GYD":60.58483403,"HKD":2.275082,"HNL":7.78176959,"HTG":38.49555911,"HUF":94.65737741,"IDR":5196.80775523,"ILS":0.8933574,"INR":27.60857123,"IQD":437.96820254,"IRR":515825.83338429,"ISK":35.33291887,"JMD":45.90228383,"JOD":0.20554149,"JPY":45.89270071,"KES":37.6114497,"KGS":25.35986206,"KHR":1179.26769174,"KMF":127.62562805,"KRW":389.99099853,"KWD":0.090314247,"KYD":0.24065427,"KZT":130.39657887,"LAK":6475.62952578,"LBP":26127.923456,"LKR":95.94073646,"LRD":49.5372213,"LSL":4.78842223,"LYD":1.86212116,"MAD":2.81766368,"MDL":5.17728912,"MGA":1310.19119242,"MKD":15.93018344,"MMK":608.84554266,"MNT":1042.89758007,"MOP":2.34333446,"MRU":11.71506868,"MUR":13.8323656,"MVR":4.4819147,"MWK":502.74144022,"MXN":5.2925768,"MYR":1.18479321,"MZN":18.43756068,"NAD":4.78842223,"NGN":385.01810875,"NIO":10.66317306,"NOK":2.77495837,"NPR":44.19442039,"NZD":0.51820588,"OMR":0.11162097,"PAB":0.28990338,"PGK":1.31475453,"PHP":18.21413092,"PKR":80.40128417,"PLN":1.13798262,"PYG":1656.8305223,"QAR":1.05524829,"RON":1.38385467,"RSD":30.45704935,"RUB":24.32752598,"RWF":427.54894853,"SAR":1.08713766,"SBD":2.32779239,"SCR":4.24391771,"SDG":174.00593658,"SEK":2.90559424,"SGD":0.3712619,"SHP":0.21926219,"SLE":6.64020559,"SOS":165.82232423,"SRD":10.98733178,"SSP":1662.82265642,"STN":6.42019995,"SYP":3768.96905942,"SZL":4.78842223,"THB":9.73234244,"TJS":2.67710065,"TMT":1.01467446,"TND":0.86858096,"TOP":0.69109128,"TRY":14.31221608,"TTD":1.97147927,"TWD":9.31512562,"TZS":765.82168364,"UAH":13.06188491,"UGX":1204.86273599,"USD":0.28990338,"UYU":11.66396404,"UZS":3449.47379066,"VES":253.55253391,"VND":7512.0313393,"VUV":34.49574112,"WST":0.8050626,"XAF":170.16750407,"XCD":0.78546938,"XCG":0.52095778,"XOF":170.16750407,"XPF":30.95688396,"YER":68.44327313,"ZAR":4.78842223,"ZMW":5.78643078,"ZWG":7.75730165};
 // Las que se muestran en "equivalencias": las más relevantes para alguien en Perú
-const IMPORTANT = ["PEN","USD","EUR","CLP","ARS","BRL","COP","MXN","BOB","CNY","GBP","JPY","CAD","CHF"];
+// Orden por importancia para alguien en Perú: ahorro y precios, remesas, frontera y viajes, compras
+const IMPORTANT = ["PEN","USD","EUR","CLP","CNY","VES","ARS","BOB","COP","BRL","MXN"];
 const POPULAR = ["PEN","USD","EUR","ARS","CLP","COP","MXN","BRL","BOB","UYU","PYG","VES","CRC","DOP","GTQ","HNL","NIO","PAB","CUP","GBP","CAD","JPY","CNY","KRW","CHF","AUD"];
 // País (región) usado para la bandera cuando no coincide con las dos primeras letras del código
 const FLAG_FIX = { EUR:"EU", ANG:"CW", XCG:"CW", XAF:"CM", XOF:"SN", XCD:"AG", XPF:"PF", CNH:"CN" };
@@ -266,18 +357,142 @@ function curBtn(el, c) {
 }
 function save() { try { localStorage.setItem("conv2", JSON.stringify(state)); } catch (e) {} }
 
-function render() {
+// ---- Historial de 7 días (para flechas y gráfico) ----
+let HIST = {};
+try { HIST = JSON.parse(localStorage.getItem("hist") || "{}") || {}; } catch (e) { HIST = {}; }
+const KEEP = [...new Set([...IMPORTANT, ...POPULAR, "VES"])];
+function series(a, b, n = 7) {
+  const desde = new Date(Date.now() - (n + 0.5) * 864e5).toISOString().slice(0, 10);
+  const s = Object.keys(HIST).sort().filter(k => k >= desde && HIST[k][a] && HIST[k][b]).map(k => HIST[k][b] / HIST[k][a]);
+  s.push(RATES[b] / RATES[a]); return s;
+}
+function change(a, b) { const s = series(a, b); return s.length < 3 ? null : (s[s.length - 1] - s[0]) / s[0] * 100; }
+const cls = ch => Math.abs(ch) < 0.05 ? "eq" : ch > 0 ? "up" : "dn";
+const arrow = ch => `${Math.abs(ch) < 0.05 ? "=" : ch > 0 ? "▲" : "▼"} ${Math.abs(ch).toFixed(1)}%`;
+let RANGE = 7;
+async function loadHist(n = 7) {
+  const days = []; for (let i = 30; i >= 1; i--) days.push(new Date(Date.now() - i * 864e5).toISOString().slice(0, 10));
+  const pedir = days.slice(-n);
+  if (false) for (let i = 7; i >= 1; i--) days.push(new Date(Date.now() - i * 864e5).toISOString().slice(0, 10));
+  await Promise.allSettled(pedir.filter(d => !HIST[d]).map(async d => {
+    const r = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${d}/v1/currencies/pen.min.json`);
+    if (!r.ok) throw 0; const j = await r.json(); const o = {};
+    for (const c of KEEP) { const v = j.pen[c.toLowerCase()]; if (v > 0) o[c] = v; }
+    HIST[d] = o;
+  }));
+  for (const k of Object.keys(HIST)) if (!days.includes(k)) delete HIST[k];
+  try { localStorage.setItem("hist", JSON.stringify(HIST)); } catch (e) {}
+  lastFrom = null; chartKey = ""; render("hist"); drawTape();
+}
+
+// ---- Montos rápidos ----
+const QUICK = [10, 50, 100, 500, 1000, 5000];
+function drawQuick() {
+  const q = $("quick"), cur = amount();
+  q.innerHTML = QUICK.map(v => `<button type="button" data-v="${v}" class="${v === cur ? "on" : ""}">${v.toLocaleString("en-US")} ${state.from}</button>`).join("");
+}
+$("quick").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { state.entry = b.dataset.v; render("pick"); } });
+
+// ---- Gráfico grande con frase clara ----
+let chartKey = "";
+const lower = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+function drawChart() {
+  const a = state.from, b = state.to, key = `${a}-${b}-${RANGE}-${Object.keys(HIST).length}`;
+  if (key === chartKey) return; chartKey = key;
+  const sec = $("chart"), s = series(a, b, RANGE);
+  if (s.length < 3) { sec.hidden = true; return; }
+  sec.hidden = false;
+  const svg = sec.querySelector("svg"), W = svg.clientWidth || 300, H = svg.clientHeight || 130;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const mn = Math.min(...s), mx = Math.max(...s);
+  const pts = s.map((v, i) => [i / (s.length - 1) * (W - 8) + 4, mx === mn ? H / 2 : 10 + (1 - (v - mn) / (mx - mn)) * (H - 20)]);
+  const d = "M" + pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" L");
+  const ln = $("line"), ar = $("area"), dot = $("dot");
+  ln.setAttribute("d", d); ar.setAttribute("d", `${d} L${pts[pts.length - 1][0].toFixed(1)},${H} L${pts[0][0].toFixed(1)},${H} Z`);
+  dot.setAttribute("cx", pts[pts.length - 1][0]); dot.setAttribute("cy", pts[pts.length - 1][1]);
+  ln.style.setProperty("--len", ln.getTotalLength());
+  for (const el of [ln, ar, dot]) { el.style.animation = "none"; void el.getBoundingClientRect(); el.style.animation = ""; }
+  $("chartTitle").textContent = `1 ${a} en ${b}`;
+  $("cMin").textContent = `mín ${fmt(mn)}`; $("cMax").textContent = `máx ${fmt(mx)}`;
+  const ch = (s[s.length - 1] - s[0]) / s[0] * 100, per = RANGE === 7 ? "hace una semana" : "hace un mes", pct = Math.abs(ch).toFixed(1) + "%";
+  let txt;
+  if (Math.abs(ch) < 0.05) txt = `El precio está <b>igual</b> que ${per}.`;
+  else if (b === "PEN") txt = `El ${lower(INFO[a].name)} está <b class="${ch > 0 ? "up" : "dn"}">${pct} más ${ch > 0 ? "caro" : "barato"}</b> que ${per}.<span class="tip">${ch > 0 ? "Buen momento para vender " + a + "." : "Buen momento para comprar " + a + "."}</span>`;
+  else if (a === "PEN") txt = `Tus soles rinden <b class="${ch > 0 ? "up" : "dn"}">${pct} ${ch > 0 ? "más" : "menos"}</b> ${b} que ${per}.<span class="tip">${ch > 0 ? "Buen momento para cambiar a " + b + "." : "Conviene esperar si puedes."}</span>`;
+  else txt = `1 ${a} te da <b class="${ch > 0 ? "up" : "dn"}">${pct} ${ch > 0 ? "más" : "menos"}</b> ${b} que ${per}.`;
+  $("insight").innerHTML = txt;
+}
+$("seg").addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b) return;
+  RANGE = +b.dataset.d; for (const x of $("seg").children) x.classList.toggle("on", x === b);
+  chartKey = ""; drawChart();
+  if (RANGE === 30) await loadHist(30);
+});
+let anchoGraf = 0;
+addEventListener("resize", () => { const s2 = $("chart").querySelector("svg"), w = s2.clientWidth + s2.clientHeight * 1000; if (w && Math.abs(w - anchoGraf) > 4) { anchoGraf = w; chartKey = ""; drawChart(); } });
+
+// ---- Cinta de monedas que se mueve ----
+const TAPE = ["USD","EUR","CLP","CNY","VES","ARS","BOB","COP","BRL","MXN"];
+function drawTape() {
+  const html = TAPE.map(c => {
+    const p = 1 / RATES[c], ch = change(c, "PEN");
+    const val = p >= 0.1 ? `S/ ${p.toFixed(3)}` : `S/1 = ${fmt(RATES[c])}`;
+    return `<button type="button" class="tick" data-c="${c}"><span class="flag">${INFO[c].flag}</span>${c} <span class="p">${val}</span>${ch == null ? "" : `<span class="${cls(ch)}">${arrow(ch)}</span>`}</button>`;
+  }).join("");
+  $("tapeIn").innerHTML = `<span class="grp">${html}</span><span class="grp" aria-hidden="true">${html.replaceAll("<button ", '<button tabindex="-1" ')}</span>`;
+}
+$("tapeIn").addEventListener("click", e => { const b = e.target.closest(".tick"); if (b) { state.from = b.dataset.c; state.to = "PEN"; render("pick"); } });
+
+// ---- Resultado que cuenta hacia arriba ----
+let shownOut = 0, outRaf, lastFrom = null;
+function setOut(v, animate) {
+  cancelAnimationFrame(outRaf); const el = $("outDisp");
+  if (!animate || matchMedia("(prefers-reduced-motion: reduce)").matches) { shownOut = v; el.textContent = fmt(v); return; }
+  const s = shownOut, t0 = performance.now();
+  const step = t => { const k = Math.min(1, (t - t0) / 520), e = 1 - Math.pow(1 - k, 3); shownOut = k < 1 ? s + (v - s) * e : v;
+    el.textContent = fmt(shownOut); if (k < 1) outRaf = requestAnimationFrame(step); else fitNums(); };
+  outRaf = requestAnimationFrame(step);
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+}
+function drawTrend() {
+  const t = $("trend"), s = series(state.from, state.to);
+  if (s.length < 3) { t.hidden = true; return; }
+  t.hidden = false;
+  const mn = Math.min(...s), mx = Math.max(...s);
+  $("spark").setAttribute("points", s.map((v, i) => `${(i / (s.length - 1) * 120).toFixed(1)},${mx === mn ? 14 : (26 - (v - mn) / (mx - mn) * 24).toFixed(1)}`).join(" "));
+  const ch = change(state.from, state.to), e = $("trendTxt"); e.textContent = `${arrow(ch)} en 7 días`; e.className = cls(ch);
+}
+function drawCards(n, a) {
+  const list = IMPORTANT.filter(c => c !== a), rows = $("rows");
+  if (a !== lastFrom) {
+    rows.innerHTML = "";
+    list.forEach((c, i) => {
+      const d = document.createElement("button"); d.type = "button"; d.className = "card"; d.dataset.c = c; d.title = INFO[c].name;
+      d.style.animationDelay = (i * 45) + "ms";
+      d.innerHTML = `<span class="top"><span class="flag">${INFO[c].flag}</span><span class="code">${c}</span></span><span class="v"></span><span class="ch"></span>`;
+      d.addEventListener("click", () => { state.to = c; render("pick"); window.scrollTo({ top: 0, behavior: "smooth" }); });
+      rows.appendChild(d);
+    });
+    lastFrom = a;
+  }
+  for (const d of rows.children) {
+    const c = d.dataset.c, ch = change(a, c), e = d.querySelector(".ch");
+    const v = d.querySelector(".v"), txt = fmt(convert(n, a, c));
+    v.textContent = txt; v.style.fontSize = "";
+    let fs = parseFloat(getComputedStyle(v).fontSize);
+    while (v.scrollWidth > v.clientWidth + 1 && fs > 10) { fs -= 1; v.style.fontSize = fs + "px"; }
+    if (ch == null) { e.textContent = INFO[c].name; e.className = "ch eq"; } else { e.textContent = arrow(ch); e.className = "ch " + cls(ch); }
+  }
+}
+
+function render(how) {
   const n = amount(), a = state.from, b = state.to;
   curBtn($("fromBtn"), a); curBtn($("toBtn"), b);
-  $("inDisp").textContent = fmtEntry(state.entry);
-  $("outDisp").textContent = fmt(convert(n, a, b));
+  if (document.activeElement !== $("inDisp")) $("inDisp").value = state.entry ? fmtEntry(state.entry) : "";
+  setOut(convert(n, a, b), how !== "type" && how !== "hist");
   $("rate").textContent = `1 ${a} = ${fmt(convert(1, a, b))} ${b}`;
-  $("boardTitle").textContent = `${fmtEntry(state.entry)} ${a} en otras monedas`;
-  fitNums();
-  const list = IMPORTANT.filter(c => c !== a);
-  const rows = $("rows"); rows.innerHTML = "";
-  for (const c of list) rows.appendChild(rowEl(c, fmt(convert(n, a, c)), () => { state.to = c; save(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
-  save();
+  $("boardTitle").textContent = `${state.entry ? fmtEntry(state.entry) : "0"} ${a} en otras monedas`;
+  drawCards(n, a); drawTrend(); drawQuick(); drawChart(); fitNums(); save();
 }
 // Achica el número si no cabe en su recuadro, para que nunca se corte
 function fitNums() {
@@ -297,39 +512,43 @@ function rowEl(c, val, onPick) {
   return d;
 }
 
-function press(k) {
-  let s = state.entry;
-  if (k === "back") s = s.slice(0, -1);
-  else if (k === "clear") s = "";
-  else if (k === ".") { if (!s.includes(".")) s = (s || "0") + "."; }
-  else if (k === "copy") { copy(); return; }
-  else {
-    if (s.includes(".") && s.split(".")[1].length + k.length > 6) return;
-    if (s.replace(".", "").length + k.length > 15) return;
-    s = (s === "0" ? "" : s) + k;
-    if (/^0+$/.test(s)) s = "0";
-  }
-  state.entry = s; render();
-}
-$("pad").addEventListener("click", e => { const b = e.target.closest(".k"); if (b) press(b.dataset.k); });
+// ---- Monto con el teclado del celular (o el teclado físico en computadora) ----
+const inp = $("inDisp");
+inp.addEventListener("focus", () => { inp.value = state.entry; requestAnimationFrame(() => { try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (e) {} }); });
+inp.addEventListener("blur", () => render("type"));
+inp.addEventListener("input", () => {
+  let s = inp.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
+  const i = s.indexOf(".");
+  if (i >= 0) s = s.slice(0, i + 1) + s.slice(i + 1).replace(/\./g, "").slice(0, 6);
+  let [w, d] = s.split("."); w = (w || "").replace(/^0+(?=\d)/, "").slice(0, 15);
+  s = d !== undefined ? (w || "0") + "." + d : w;
+  if (inp.value !== s) inp.value = s;
+  state.entry = s; render("type");
+});
+inp.addEventListener("keydown", e => { if (e.key === "Enter") inp.blur(); else if (e.key === "Escape") { inp.value = ""; inp.dispatchEvent(new Event("input")); } });
+$("billFrom").addEventListener("click", e => { if (!e.target.closest(".cur-btn")) inp.focus(); });
 document.addEventListener("keydown", e => {
   if (!$("sheet").hidden) { if (e.key === "Escape") closeSheet(); return; }
-  if (/^[0-9]$/.test(e.key)) press(e.key);
-  else if (e.key === "." || e.key === ",") press(".");
-  else if (e.key === "Backspace") press("back");
-  else if (e.key === "Delete" || e.key === "Escape") press("clear");
+  const t = document.activeElement; if (t && t.tagName === "INPUT") return;
+  if (/^[0-9.,]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) inp.focus();
+  else if (e.key === "Delete") { state.entry = ""; render("type"); }
 });
+$("copyKey").addEventListener("click", () => copy());
+$("infoBtn").addEventListener("click", () => { const n = $("note"); n.hidden = !n.hidden; $("infoBtn").setAttribute("aria-expanded", String(!n.hidden)); });
 async function copy() {
   const txt = `${fmtEntry(state.entry)} ${state.from} = ${$("outDisp").textContent} ${state.to}`;
   const k = $("copyKey");
   try { await navigator.clipboard.writeText(txt); k.textContent = "Copiado"; }
   catch (e) { const s = window.getSelection(), r = document.createRange(); r.selectNodeContents($("outDisp")); s.removeAllRanges(); s.addRange(r); k.textContent = "Listo"; }
-  setTimeout(() => k.textContent = "Copiar", 1500);
+  k.classList.add("done");
+  setTimeout(() => { k.textContent = "Copiar"; k.classList.remove("done"); }, 1500);
 }
+let giro = 0;
 $("swap").addEventListener("click", () => {
-  const out = convert(amount(), state.from, state.to);
+  giro += 180;
+  $("swap").style.transform = (matchMedia("(max-width: 640px)").matches ? "rotate(90deg) " : "") + `rotate(${giro}deg)`;
   [state.from, state.to] = [state.to, state.from];
-  render();
+  render("swap");
 });
 
 // Selector de moneda
@@ -391,7 +610,7 @@ async function loadRates() {
   if (ok.length) {
     applyRates(ok[0].rates, ok[0].when);
     try { localStorage.setItem("rates", JSON.stringify({ rates: ok[0].rates, when: ok[0].when.getTime() })); } catch (e) {}
-    render(); showStatus(esHoy(ratesDate) ? "live" : "old", esHoy(ratesDate) ? `Al día · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}` : `Último: ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
+    render("hist"); drawTape(); showStatus(esHoy(ratesDate) ? "live" : "old", esHoy(ratesDate) ? `Al día · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}` : `Último: ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
   } else {
     render(); showStatus(esHoy(ratesDate) ? "live" : "old", `${esHoy(ratesDate) ? "Al día" : "Último"} · ${ratesDate.getDate()} ${MESES[ratesDate.getMonth()]}`);
   }
@@ -400,8 +619,10 @@ try { const c = JSON.parse(localStorage.getItem("rates") || "null"); if (c && c.
 $("status").addEventListener("click", loadRates);
 document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() - lastLoad > 30 * 60 * 1000) { lastLoad = Date.now(); loadRates(); } });
 let lastLoad = Date.now();
+drawTape();
 render();
 loadRates();
+loadHist();
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
 
